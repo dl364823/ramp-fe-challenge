@@ -36,7 +36,7 @@ export function App() {
     },
     [paginatedTransactionsUtils, transactionsByEmployeeUtils]
   )
-
+  
   useEffect(() => {
     if (employees === null && !employeeUtils.loading) {
       loadAllTransactions()
@@ -63,9 +63,11 @@ export function App() {
           onChange={async (newValue) => {
             if (newValue === null) {
               return
+            } 
+            else if (newValue.id === EMPTY_EMPLOYEE.id){
+              await loadAllTransactions()
             }
-
-            await loadTransactionsByEmployee(newValue.id)
+            else await loadTransactionsByEmployee(newValue.id)
           }}
         />
 
