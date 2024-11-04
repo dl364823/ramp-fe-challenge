@@ -8,7 +8,7 @@ export const TransactionPane: TransactionPaneComponent = ({
   setTransactionApproval: consumerSetTransactionApproval,
 }) => {
   const [approved, setApproved] = useState(transaction.approved)
-
+  const [isUpdating, setIsUpdating] = useState(false)
   return (
     <div className="RampPane">
       <div className="RampPane--content">
@@ -21,14 +21,20 @@ export const TransactionPane: TransactionPaneComponent = ({
       <InputCheckbox
         id={transaction.id}
         checked={approved}
-        disabled={loading}
+        disabled={isUpdating}
         onChange={async (newValue) => {
-          await consumerSetTransactionApproval({
-            transactionId: transaction.id,
-            newValue,
-          })
-
-          setApproved(newValue)
+          setApproved(newValue) // Update the status immediately 
+          try{
+            await consumerSetTransactionApproval({
+              transactionId: transaction.id,
+              newValue,
+            })
+          } catch (error) {
+            setApproved(!newValue)
+            console.error("Failed to update transaction approval", error)
+          } finally {
+            setIsUpdating(false)
+          }
         }}
       />
     </div>
