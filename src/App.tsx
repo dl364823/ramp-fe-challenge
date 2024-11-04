@@ -26,7 +26,6 @@ export function App() {
     await employeeUtils.fetchAll()
     setIsLoading(false)
     await paginatedTransactionsUtils.fetchAll()
-    
   }, [employeeUtils, paginatedTransactionsUtils, transactionsByEmployeeUtils])
 
   const loadTransactionsByEmployee = useCallback(
