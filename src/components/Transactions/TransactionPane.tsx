@@ -9,6 +9,23 @@ export const TransactionPane: TransactionPaneComponent = ({
 }) => {
   const [approved, setApproved] = useState(transaction.approved)
   const [isUpdating, setIsUpdating] = useState(false)
+  
+  const handleApprovalChange = async (newValue: boolean) => {
+    setApproved(newValue)
+    setIsUpdating(true)
+    try{
+      await consumerSetTransactionApproval({
+      transactionId: transaction.id,
+      newValue,
+    })
+
+    } catch (error) {
+      setApproved(!newValue)
+      console.error("Failed to update transaction approval", error)
+    } finally {
+      setIsUpdating(false)
+    }
+  }
   return (
     <div className="RampPane">
       <div className="RampPane--content">
@@ -22,21 +39,8 @@ export const TransactionPane: TransactionPaneComponent = ({
         id={transaction.id}
         checked={approved}
         disabled={isUpdating}
-        onChange={async (newValue) => {
-          setApproved(newValue) // Update the status immediately 
-          try{
-            await consumerSetTransactionApproval({
-              transactionId: transaction.id,
-              newValue,
-            })
-          } catch (error) {
-            setApproved(!newValue)
-            console.error("Failed to update transaction approval", error)
-          } finally {
-            setIsUpdating(false)
-          }
-        }}
-      />
+        onChange={(newValue) => handleApprovalChange(newValue)}
+       />
     </div>
   )
 }
